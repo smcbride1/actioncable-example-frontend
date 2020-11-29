@@ -1,0 +1,1 @@
+# actioncable-example-frontend
