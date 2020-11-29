@@ -1,6 +1,7 @@
 const ActionCable = require('actioncable');
+const consumer = ActionCable.createConsumer('ws://localhost:3000/cable');
 
-const consumer = createConsumer('ws://localhost:3000/cable');
+document.getElementById("message-send-button").addEventListener("click", sendMessage);
 
 const chatChannel = consumer.subscriptions.create({ channel: "ChatChannel" }, {
     received(data) {
@@ -8,21 +9,16 @@ const chatChannel = consumer.subscriptions.create({ channel: "ChatChannel" }, {
     },
    
     appendLine(data) {
-      const html = this.createLine(data)
-      const element = document.querySelector("[data-chat-room='Best Room']")
-      element.insertAdjacentHTML("beforeend", html)
-    },
-   
-    createLine(data) {
-      return `
-        <article class="chat-line">
-          <span class="message">${data["body"]}</span>
-        </article>
-      `
+      const messageContainer = document.getElementById("messages-container");
+      const message = document.createElement("li");
+      message.innerText = data["message"];
+      console.log(data["message"]);
+      messageContainer.appendChild(message)
     }
 });
 
 function sendMessage() {
+    console.log("Message sent");
     const messageContent = document.getElementById("message-input").value;
     chatChannel.send({ message: messageContent });
 };
